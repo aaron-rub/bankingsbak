@@ -1,38 +1,34 @@
-<!DOCTYPE HTML>
-<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
-      layout:decorate="~{layouts/base}" lang="en">
-
+<!DOCTYPE html>
+<html>
 <head>
-    <title>Birds</title>
+    <title>Income Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
-<th:block layout:fragment="body" th:remove="tag">
-    <!-- Start of body content specific to page -->
-    <div class="px-4 py-5 my-5">
-        <h3 class="display-5 fw-bold">Birds</h3>
-    </div>
-    <!-- End of body content specific to page -->
-</th:block>
+    <canvas id="incomeChart"></canvas>
+    <script>
+        window.onload = function() {
+            axios.get('http://localhost:8080/incomes')
+                .then(response => {
+                    const data = response.data.map((income, index) => ({
+                        x: index + 1,
+                        y: income.dailyIncome
+                    }));
+                    new Chart(document.getElementById('incomeChart'), {
+                        type: 'line',
+                        data: {
+                            datasets: [{
+                                label: 'Daily Income',
+                                data: data,
+                                fill: false,
+                                backgroundColor: 'rgb(255, 99, 132)',
+                                borderColor: 'rgba(255, 99, 132, 0.2)',
+                            }]
+                        },
+                    });
+                });
+        };
+    </script>
 </body>
-
-<th:block layout:fragment="script" th:remove="tag">
-<!-- Start of custom script specific to page -->
-<script src="/static/vanta/three.r119.min.js" th:src="@{/vanta/three.r119.min.js}"></script>
-<script src="/static/vanta/vanta.birds.min.js" th:src="@{/vanta/vanta.birds.min.js}"></script>
-<script>
-    VANTA.BIRDS({
-        el: "body",
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.00,
-        minWidth: 200.00,
-        scale: 1.00,
-        scaleMobile: 1.00
-    })
-</script>
-<!-- End of custom script specific to page -->
-</th:block>
-
 </html>
